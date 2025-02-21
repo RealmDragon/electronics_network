@@ -1,72 +1,59 @@
 from django.contrib import admin
-from .models import Factory, RetailNetwork, IndividualEntrepreneur, Product
 from django.utils.html import format_html
+from .models import Factory, RetailNetwork, IndividualEntrepreneur, Product
 
 
 @admin.register(Factory)
 class FactoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'city', 'get_supplier_link', 'debt')  # Отображаемые поля в списке
-    list_filter = ('city',)  # Фильтр по городу
-    actions = ['clear_debt']  # Admin action
+    list_display = ('name', 'country', 'city', 'get_supplier_link', 'debt', 'created_at')
+    list_filter = ('city', 'country')
+    actions = ['clear_debt']
 
     def get_supplier_link(self, obj):
-        return None
-
+        return None  # У Factory нет поставщика
     get_supplier_link.short_description = 'Поставщик'
 
     def clear_debt(self, request, queryset):
-        """Admin action для очистки задолженности."""
-        for obj in queryset:
-            obj.debt = 0.00
-            obj.save()
-
+        queryset.update(debt=0.00)  # Оптимизированный запрос
     clear_debt.short_description = "Очистить задолженность"
 
 
 @admin.register(RetailNetwork)
 class RetailNetworkAdmin(admin.ModelAdmin):
-    list_display = ('name', 'city', 'get_supplier_link', 'debt')
-    list_filter = ('city',)
+    list_display = ('name', 'country', 'city', 'get_supplier_link', 'debt', 'created_at')
+    list_filter = ('city', 'country')
     actions = ['clear_debt']
 
     def get_supplier_link(self, obj):
         if obj.supplier:
-            return format_html("<a href='/admin/network/factory/{}/change/'>{}</a>", obj.supplier.id, obj.supplier.name)
+            url = f"/admin/network/factory/{obj.supplier.id}/change/"
+            return format_html('<a href="{}">{}</a>', url, obj.supplier.name)
         return None
-
     get_supplier_link.short_description = 'Поставщик'
 
     def clear_debt(self, request, queryset):
-        for obj in queryset:
-            obj.debt = 0.00
-            obj.save()
-
+        queryset.update(debt=0.00)  # Оптимизированный запрос
     clear_debt.short_description = "Очистить задолженность"
 
 
 @admin.register(IndividualEntrepreneur)
 class IndividualEntrepreneurAdmin(admin.ModelAdmin):
-    list_display = ('name', 'city', 'get_supplier_link', 'debt')
-    list_filter = ('city',)
+    list_display = ('name', 'country', 'city', 'get_supplier_link', 'debt', 'created_at')
+    list_filter = ('city', 'country')
     actions = ['clear_debt']
 
     def get_supplier_link(self, obj):
         if obj.supplier:
-            return format_html("<a href='/admin/network/retailnetwork/{}/change/'>{}</a>", obj.supplier.id,
-                               obj.supplier.name)
+            url = f"/admin/network/retailnetwork/{obj.supplier.id}/change/"
+            return format_html('<a href="{}">{}</a>', url, obj.supplier.name)
         return None
-
     get_supplier_link.short_description = 'Поставщик'
 
     def clear_debt(self, request, queryset):
-        for obj in queryset:
-            obj.debt = 0.00
-            obj.save()
-
+        queryset.update(debt=0.00)  # Оптимизированный запрос
     clear_debt.short_description = "Очистить задолженность"
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'model', 'release_date', 'factory', 'retail_network', 'individual_entrepreneur')
-    list_filter = ('factory', 'retail_network', 'individual_entrepreneur')
+    list_display = ('name', 'model', 'release_date')

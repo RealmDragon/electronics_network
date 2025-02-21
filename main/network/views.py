@@ -1,46 +1,34 @@
-from rest_framework import viewsets
-from rest_framework import filters
-from .models import Factory, RetailNetwork, IndividualEntrepreneur, Product
-from .serializers import FactorySerializer, RetailNetworkSerializer, IndividualEntrepreneurSerializer, ProductSerializer
-from rest_framework import permissions
-
-
-class IsActiveEmployee(permissions.BasePermission):
-    """
-    Custom permission to only allow active employees to access the API.
-    """
-
-    def has_permission(self, request, view):
-        return request.user and request.user.is_active
-
+from rest_framework import viewsets, filters
+from .models import Factory, RetailNetwork, IndividualEntrepreneur
+from .serializers import FactorySerializer, RetailNetworkSerializer, IndividualEntrepreneurSerializer
+from .permissions import IsActiveEmployee  # Импортируем наш permission
 
 class FactoryViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows factories to be viewed or edited.
+    """
     queryset = Factory.objects.all()
     serializer_class = FactorySerializer
-    permission_classes = [IsActiveEmployee]  # Только для активных сотрудников
     filter_backends = [filters.SearchFilter]
-    search_fields = ['country']  # Фильтрация по стране
-
+    search_fields = ['country', 'city'] # Добавлена фильтрация по городу
+    permission_classes = [IsActiveEmployee]  # Применяем permission
 
 class RetailNetworkViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows retail networks to be viewed or edited.
+    """
     queryset = RetailNetwork.objects.all()
     serializer_class = RetailNetworkSerializer
-    permission_classes = [IsActiveEmployee]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['country']
-
+    search_fields = ['country', 'city'] # Добавлена фильтрация по городу
+    permission_classes = [IsActiveEmployee]  # Применяем permission
 
 class IndividualEntrepreneurViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows individual entrepreneurs to be viewed or edited.
+    """
     queryset = IndividualEntrepreneur.objects.all()
     serializer_class = IndividualEntrepreneurSerializer
-    permission_classes = [IsActiveEmployee]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['country']
-
-
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [IsActiveEmployee]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name', 'model']
+    search_fields = ['country', 'city'] # Добавлена фильтрация по городу
+    permission_classes = [IsActiveEmployee]  # Применяем permission
