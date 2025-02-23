@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'electronics_network.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'electronics_db',  # Имя базы данных
+        'USER': 'postgres',      # Имя пользователя PostgreSQL
+        'PASSWORD': 'ваш_пароль',  # Пароль пользователя PostgreSQL
+        'HOST': 'localhost',      # Хост
+        'PORT': '5432',          # Порт
     }
 }
 
